@@ -2,6 +2,12 @@ type DocType = {
   name: string;
   doc: string;
   package?: string;
-  methods?: DocFunction[];
+  methods?: DocType[];
+  code?: string;
 };
-type DocFunction = { name: string; doc: string; package?: string };
+type DocFunction = {
+  name: string;
+  doc: string;
+  package?: string;
+  code?: string;
+};
