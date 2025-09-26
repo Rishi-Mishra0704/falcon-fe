@@ -1,20 +1,24 @@
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card"
+import { CodeSnippet } from "@/components/ui/codesnippet"
+import { Code2 } from "lucide-react"
 
-export default async function Home() {
+export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-     
-
       {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center text-center px-6">
         <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
           Falcon — Minimalistic Go Web Framework
         </h2>
         <p className="text-gray-700 max-w-xl mb-6">
-          High-performance, minimal, and developer-friendly framework to build
-          Go web applications effortlessly.
+          High-performance, minimal, and developer-friendly framework to build Go web
+          applications effortlessly.
         </p>
         <div className="flex gap-4 mb-12">
           <a href="/docs">
@@ -27,6 +31,17 @@ export default async function Home() {
           >
             <Button variant="outline">View on GitHub</Button>
           </a>
+        </div>
+      </section>
+
+      {/* Install Section */}
+      <section className="w-full bg-white py-12 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <CodeSnippet
+            language="bash"
+            label="Install"
+            code={`go get github.com/AscendingHeavens/falcon`}
+          />
         </div>
       </section>
 
@@ -60,11 +75,48 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Quickstart Section */}
+      <section className="px-6 md:px-8 pb-20">
+        <div className="mx-auto max-w-5xl">
+          <Card>
+            <CardHeader className="flex items-center md:items-start">
+              <CardTitle className="flex items-center gap-2">
+                <Code2 className="h-5 w-5 text-primary" />
+                Quickstart
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CodeSnippet
+                language="go"
+                label="main.go"
+                code={`package main
+
+import (
+  "net/http"
+  framework "github.com/AscendingHeavens/falcon"
+)
+
+func main() {
+  app := framework.New()
+
+  app.GET("/hello/:name", func(c framework.Context) error {
+    name := c.Param("name")
+    return c.JSON(http.StatusOK, map[string]string{"message": "Hello " + name})
+  })
+
+  app.Listen(":8080")
+}`}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* Highlights Section */}
       <section className="w-full bg-gray-50 py-16 px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h3 className="text-3xl font-bold mb-8">Highlights</h3>
-          <ul className="list-disc list-inside text-left md:text-left text-gray-700 space-y-3 max-w-2xl mx-auto">
+          <ul className="list-disc list-inside text-left text-gray-700 space-y-3 max-w-2xl mx-auto">
             <li>Built-in routing, middleware, and context handling</li>
             <li>Template rendering with hot reload in dev mode</li>
             <li>JSON, XML, Form, and Multipart body binding</li>
@@ -75,8 +127,6 @@ export default async function Home() {
           </ul>
         </div>
       </section>
-
-
     </main>
-  );
+  )
 }
