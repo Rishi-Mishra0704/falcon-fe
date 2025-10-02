@@ -40,7 +40,7 @@ export default function Home() {
           <CodeSnippet
             language="bash"
             label="Install"
-            code={`go get github.com/AscendingHeavens/falcon`}
+            code={`ggo get github.com/ascendingheavens/falcon`}
           />
         </div>
       </section>
@@ -93,11 +93,11 @@ export default function Home() {
 
 import (
   "net/http"
-  framework "github.com/AscendingHeavens/falcon"
+ "github.com/ascendingheavens/falcon"
 )
 
 func main() {
-  app := framework.New()
+  app := falcon.New()
 
   app.GET("/hello/:name", func(c framework.Context) error {
     name := c.Param("name")

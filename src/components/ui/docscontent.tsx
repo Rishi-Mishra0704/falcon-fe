@@ -19,7 +19,7 @@ export function DocsContent() {
         <h2 id="heading-installation" className="text-2xl font-bold">Installation</h2>
         <p className="mt-3 text-muted-foreground">Install Falcon using:</p>
         <div className="mt-3">
-          <CodeSnippet language="bash" code={`go get github.com/AscendingHeavens/falcon`} />
+          <CodeSnippet language="bash" code={`ggo get github.com/ascendingheavens/falcon`} />
         </div>
       </section>
 
@@ -48,19 +48,125 @@ func main() {
 }`} />
         </div>
       </section>
+      {/* ---------------- Server Setup ---------------- */}
+      <section id="server-setup" aria-labelledby="heading-server-setup">
+        <h2 id="heading-server-setup" className="text-2xl font-bold">Server Setup</h2>
+        <p className="mt-3 text-muted-foreground">
+          The <code>Server</code> struct initializes Falcon with middleware, routes, and a database connection.
+        </p>
+        <div className="mt-3">
+          <CodeSnippet language="go" code={`type Server struct {
+  Router *falcon.Server
+  db     db.DB
+  config config.Config
+}
+
+func NewServer(cfg config.Config) (*Server, error) {
+  server := &Server{
+    config: cfg,
+    db:     db.NewInMemoryUserDB(),
+  }
+
+  server.SetupRouter()
+  return server, nil
+}`} />
+        </div>
+      </section>
 
       {/* ---------------- Routing ---------------- */}
       <section id="routing" aria-labelledby="heading-routing">
         <h2 id="heading-routing" className="text-2xl font-bold">Routing</h2>
         <p className="mt-3 text-muted-foreground">
-          Define routes with HTTP verbs and path parameters:
+          Define routes and map them to handler methods. Example from <code>SetupRouter</code>:
         </p>
         <div className="mt-3">
-          <CodeSnippet language="go" code={`app.GET("/users/:id", func(c framework.Context) error {
-  id := c.Param("id")
-  return c.JSON(200, map[string]string{"id": id})
-})`} />
+          <CodeSnippet language="go" code={`func (server *Server) SetupRouter() {
+  router := falcon.New()
+  router.Use(middleware.CORS())
+  router.Use(middleware.Logger())
+
+  router.GET("/hello", func(c *falcon.Context) *falcon.Response {
+    return c.JSON(true, "Works", map[string]any{
+      "message": "Hello, World!",
+    }, http.StatusOK)
+  })
+
+  // Users
+  router.GET("/users", server.FetchAllUsers)
+  router.POST("/users", server.CreateUser)
+  router.GET("/users/:id", server.FetchUser)
+  router.PUT("/users/:id", server.UpdateUser)
+  router.DELETE("/users/:id", server.DeleteUser)
+
+  // Blob Example
+  router.GET("/blob", server.Blob)
+
+  server.Router = router
+}`} />
         </div>
+      </section>
+      {/* ---------------- Blob Route ---------------- */}
+      <section id="blob-route" aria-labelledby="heading-blob-route">
+        <h2 id="heading-blob-route" className="text-2xl font-bold">Blob Route</h2>
+        <p className="mt-3 text-muted-foreground">
+          Falcon can also serve binary files (like images). Example <code>/blob</code> route:
+        </p>
+        <div className="mt-3">
+          <CodeSnippet language="go" code={`func (server *Server) Blob(ctx *falcon.Context) *falcon.Response {
+  data, err := os.ReadFile("falcon.png")
+  if err != nil {
+    return ctx.ErrorJSON("Could not load image", err.Error(), http.StatusInternalServerError)
+  }
+  return ctx.Blob(http.StatusOK, data, "image/png")
+}`} />
+        </div>
+      </section>
+
+      {/* ---------------- User CRUD ---------------- */}
+      <section id="user-crud" aria-labelledby="heading-user-crud">
+        <h2 id="heading-user-crud" className="text-2xl font-bold">User CRUD</h2>
+        <p className="mt-3 text-muted-foreground">
+          Falcon makes it easy to implement REST-style CRUD endpoints.
+        </p>
+
+        <h3 className="text-xl font-semibold mt-6">Create User</h3>
+        <CodeSnippet language="go" code={`func (server *Server) CreateUser(ctx *falcon.Context) *falcon.Response {
+  var request db.User
+  if err := ctx.Bind(&request); err != nil {
+    return ctx.ErrorJSON("Invalid request body", nil, http.StatusBadRequest)
+  }
+  user, err := server.db.CreateUser(request)
+  if err != nil {
+    return ctx.ErrorJSON("Could not create user", nil, http.StatusInternalServerError)
+  }
+  return ctx.JSON(true, "User created successfully!", user, http.StatusCreated)
+}`} />
+
+        <h3 className="text-xl font-semibold mt-6">Fetch User</h3>
+        <CodeSnippet language="go" code={`func (server *Server) FetchUser(ctx *falcon.Context) *falcon.Response {
+  id := ctx.Param("id")
+  intId, _ := strconv.Atoi(id)
+  user, _ := server.db.GetUser(intId)
+  return ctx.JSON(true, "User fetched successfully", user, http.StatusOK)
+}`} />
+
+        <h3 className="text-xl font-semibold mt-6">Update User</h3>
+        <CodeSnippet language="go" code={`func (server *Server) UpdateUser(ctx *falcon.Context) *falcon.Response {
+  id := ctx.Param("id")
+  intId, _ := strconv.Atoi(id)
+  var request db.User
+  ctx.Bind(&request)
+  updatedUser, _ := server.db.UpdateUser(intId, request)
+  return ctx.JSON(true, "User updated successfully!", updatedUser, http.StatusOK)
+}`} />
+
+        <h3 className="text-xl font-semibold mt-6">Delete User</h3>
+        <CodeSnippet language="go" code={`func (server *Server) DeleteUser(ctx *falcon.Context) *falcon.Response {
+  id := ctx.Param("id")
+  intId, _ := strconv.Atoi(id)
+  server.db.DeleteUser(intId)
+  return ctx.JSON(true, "User deleted successfully!", nil, http.StatusOK)
+}`} />
       </section>
 
       {/* ---------------- Middleware ---------------- */}
@@ -199,7 +305,7 @@ app.Use(func(next framework.HandlerFunc) framework.HandlerFunc {
 
       {/* ---------------- Server Methods ---------------- */}
       <section id="server-methods" aria-labelledby="heading-server-methods">
-        <h2 className="text-2xl font-bold mt-8">Server Methods</h2>
+        <h2 id="heading-server-methods" className="text-2xl font-bold mt-8">Server Methods</h2>
 
         <h3 className="text-xl font-semibold mt-6">func New</h3>
         <div className="mt-3">
