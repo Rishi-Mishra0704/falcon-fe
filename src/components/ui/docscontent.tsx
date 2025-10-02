@@ -48,9 +48,9 @@ func main() {
 }`} />
         </div>
       </section>
-      {/* ---------------- Server Setup ---------------- */}
+        {/* ---------------- Server Setup ---------------- */}
       <section id="server-setup" aria-labelledby="heading-server-setup">
-        <h2 id="heading-server-setup" className="text-2xl font-bold">Server Setup</h2>
+        <h2 className="text-2xl font-bold">Server Setup</h2>
         <p className="mt-3 text-muted-foreground">
           The <code>Server</code> struct initializes Falcon with middleware, routes, and a database connection.
         </p>
@@ -73,7 +73,8 @@ func NewServer(cfg config.Config) (*Server, error) {
         </div>
       </section>
 
-      {/* ---------------- Routing ---------------- */}
+
+        {/* ---------------- Routing ---------------- */}
       <section id="routing" aria-labelledby="heading-routing">
         <h2 id="heading-routing" className="text-2xl font-bold">Routing</h2>
         <p className="mt-3 text-muted-foreground">
@@ -107,7 +108,7 @@ func NewServer(cfg config.Config) (*Server, error) {
       </section>
       {/* ---------------- Blob Route ---------------- */}
       <section id="blob-route" aria-labelledby="heading-blob-route">
-        <h2 id="heading-blob-route" className="text-2xl font-bold">Blob Route</h2>
+        <h2 className="text-2xl font-bold">Blob Route</h2>
         <p className="mt-3 text-muted-foreground">
           Falcon can also serve binary files (like images). Example <code>/blob</code> route:
         </p>
@@ -124,7 +125,7 @@ func NewServer(cfg config.Config) (*Server, error) {
 
       {/* ---------------- User CRUD ---------------- */}
       <section id="user-crud" aria-labelledby="heading-user-crud">
-        <h2 id="heading-user-crud" className="text-2xl font-bold">User CRUD</h2>
+        <h2 className="text-2xl font-bold">User CRUD</h2>
         <p className="mt-3 text-muted-foreground">
           Falcon makes it easy to implement REST-style CRUD endpoints.
         </p>
@@ -305,7 +306,7 @@ app.Use(func(next framework.HandlerFunc) framework.HandlerFunc {
 
       {/* ---------------- Server Methods ---------------- */}
       <section id="server-methods" aria-labelledby="heading-server-methods">
-        <h2 id="heading-server-methods" className="text-2xl font-bold mt-8">Server Methods</h2>
+        <h2 className="text-2xl font-bold mt-8">Server Methods</h2>
 
         <h3 className="text-xl font-semibold mt-6">func New</h3>
         <div className="mt-3">
