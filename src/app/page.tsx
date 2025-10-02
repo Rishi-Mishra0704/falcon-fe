@@ -40,7 +40,7 @@ export default function Home() {
           <CodeSnippet
             language="bash"
             label="Install"
-            code={`ggo get github.com/ascendingheavens/falcon`}
+            code={`go get github.com/ascendingheavens/falcon`}
           />
         </div>
       </section>
