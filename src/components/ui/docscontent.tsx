@@ -19,7 +19,7 @@ export function DocsContent() {
         <h2 id="heading-installation" className="text-2xl font-bold">Installation</h2>
         <p className="mt-3 text-muted-foreground">Install Falcon using:</p>
         <div className="mt-3">
-          <CodeSnippet language="bash" code={`ggo get github.com/ascendingheavens/falcon`} />
+          <CodeSnippet language="bash" code={`go get github.com/ascendingheavens/falcon`} />
         </div>
       </section>
 

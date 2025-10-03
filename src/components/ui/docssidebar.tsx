@@ -43,7 +43,7 @@ export function DocsSidebar() {
       >
         <ul className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible">
           {items.map(item => (
-            <li key={item.href}>
+            <li key={item.href} className="hover:bg-black hover:text-white">
               <Link
                 href={item.href}
                 className="block px-2 py-1 rounded text-[0.9rem] "
