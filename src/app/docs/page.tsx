@@ -1,151 +1,59 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import Link from "next/link"
 
-
+import { DocsSidebar } from "@/components/ui/docssidebar"
+import { DocsContent } from "@/components/ui/docscontent"
+import { Button } from "@/components/ui/button"
 
 export default function DocsPage() {
-  const [types, setTypes] = useState<DocType[]>([]);
-  const [functions, setFunctions] = useState<DocFunction[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchDocs() {
-      try {
-        const res = await fetch("/api/docs");
-        const data = await res.json();
-
-        setTypes(data.types || []);
-        setFunctions(data.functions || []);
-      } catch (err) {
-        console.error("Failed to fetch docs:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchDocs();
-  }, []);
-
-  if (loading)
-    return (
-      <div className="p-12 text-center text-lg font-medium text-gray-600">
-        Loading docs...
-      </div>
-    );
-
-  const grouped: Record<string, { types: DocType[]; functions: DocFunction[] }> =
-    {};
-  types.forEach((t) => {
-    if (t.package === "server_test") return;
-    const pkg = t.package || "root";
-    if (!grouped[pkg]) grouped[pkg] = { types: [], functions: [] };
-    grouped[pkg].types.push(t);
-  });
-  functions.forEach((f) => {
-    if (f.package === "server_test") return;
-    const pkg = f.package || "root";
-    if (!grouped[pkg]) grouped[pkg] = { types: [], functions: [] };
-    grouped[pkg].functions.push(f);
-  });
-
   return (
-    <main className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center gap-8">
-      <h1 className="text-4xl font-bold mb-6 text-center">Falcon Docs (v1.0.7)</h1>
+    <main className="bg-background">
+      
+      <section className="px-4 md:px-8 py-10">
+        <div className="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">
+          
+          {/* Sidebar */}
+          <aside
+            className="md:sticky md:top-4 h-max"
+            aria-label="Documentation Sidebar"
+          >
+            <DocsSidebar />
+          </aside>
 
-      {Object.entries(grouped).map(([pkg, content]) => (
-        <div key={pkg} className="w-full max-w-5xl">
-          <h2 className="text-2xl font-bold mb-4 flex flex-wrap items-center gap-2">
-            {pkg} Package <Badge variant="default">{pkg}</Badge>
-          </h2>
+          {/* Main Documentation Content */}
+          <article
+            className="prose dark:prose-invert max-w-3xl"
+            aria-label="Documentation Content"
+          >
+            <header className="mb-6 border-b border-border pb-4">
+              <h1 className="text-3xl font-extrabold">Documentation</h1>
+              <p className="mt-2 text-muted-foreground">
+                Learn how to install, configure, and deploy your Go framework.
+              </p>
+              <div className="mt-4 flex items-center gap-3">
+                <Button asChild>
+                  <Link href="https://pkg.go.dev/github.com/ascendingheavens/falcon">Getting Started</Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                >
+                  <Link
+                    href="https://github.com/AscendingHeavens/falcon"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub
+                  </Link>
+                </Button>
+              </div>
+            </header>
 
-          <Accordion type="multiple" className="space-y-3">
-            {/* Types */}
-            {content.types.map((t, idx) => (
-              <AccordionItem key={`${pkg}-type-${idx}`} value={`${pkg}-type-${idx}`}>
-                <AccordionTrigger className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
-                  <span className="font-medium">{t.name}</span>
-                  
-                </AccordionTrigger>
-                <AccordionContent className="space-y-2">
-                  <p className="text-gray-700">{t.doc}</p>
-                  {t.code && (
-                    <div className="overflow-x-auto rounded-lg">
-                      <SyntaxHighlighter
-                        language="go"
-                        style={materialDark}
-                        className="rounded-lg min-w-[300px]"
-                      >
-                        {t.code}
-                      </SyntaxHighlighter>
-                    </div>
-                  )}
-                  {t.methods && t.methods.length > 0 && (
-                    <Accordion type="single" collapsible className="pl-4 space-y-1 mt-2">
-                      {t.methods.map((m, midx) => (
-                        <AccordionItem key={`${pkg}-method-${midx}`} value={`${pkg}-method-${midx}`}>
-                          <AccordionTrigger className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
-                            {m.name} {m.package && <Badge>{m.package}</Badge>}
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <p className="text-gray-700">{m.doc}</p>
-                            {m.code && (
-                              <div className="overflow-x-auto rounded-lg mt-1">
-                                <SyntaxHighlighter
-                                  language="go"
-                                  style={materialDark}
-                                  className="rounded-lg min-w-[250px]"
-                                >
-                                  {m.code}
-                                </SyntaxHighlighter>
-                              </div>
-                            )}
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-
-            {/* Functions */}
-            {content.functions.length > 0 && (
-              <Accordion type="multiple" className="space-y-2 mt-4">
-                {content.functions.map((f, idx) => (
-                  <AccordionItem key={`${pkg}-fn-${idx}`} value={`${pkg}-fn-${idx}`}>
-                    <AccordionTrigger className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
-                      {f.name}
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-2">
-                      <p className="text-gray-700">{f.doc}</p>
-                      {f.code && (
-                        <div className="overflow-x-auto rounded-lg mt-1">
-                          <SyntaxHighlighter
-                            language="go"
-                            style={materialDark}
-                            className="rounded-lg min-w-[250px]"
-                          >
-                            {f.code}
-                          </SyntaxHighlighter>
-                        </div>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            )}
-          </Accordion>
+            <DocsContent />
+          </article>
         </div>
-      ))}
+      </section>
     </main>
-  );
+  )
 }
