@@ -190,16 +190,6 @@ app.Use(func(next framework.HandlerFunc) framework.HandlerFunc {
         </div>
       </section>
 
-      {/* ---------------- CLI ---------------- */}
-      <section id="cli" aria-labelledby="heading-cli">
-        <h2 id="heading-cli" className="text-2xl font-bold">CLI</h2>
-        <p className="mt-3 text-muted-foreground">
-          Example CLI command to initialize a new service:
-        </p>
-        <div className="mt-3">
-          <CodeSnippet language="bash" code={`falcon init my-service && cd my-service && go run .`} />
-        </div>
-      </section>
 
       {/* ---------------- Constants ---------------- */}
       <section id="constants" aria-labelledby="heading-constants">
