@@ -15,7 +15,6 @@ export async function GET() {
     
     // Parse the full JSON from the remote file
     const data = await res.json();
-    console.log("api docs", data);
 
     // Ensure all nested arrays (methods) are preserved — JSON.parse already does this
     // If you want, you can expand or transform data here, e.g., flatten methods

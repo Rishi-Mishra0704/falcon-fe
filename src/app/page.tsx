@@ -92,19 +92,21 @@ export default function Home() {
                 code={`package main
 
 import (
-  "net/http"
- "github.com/ascendingheavens/falcon"
+  "log"
+
+  "github.com/ascendingheavens/falcon"
 )
 
 func main() {
   app := falcon.New()
 
-  app.GET("/hello/:name", func(c framework.Context) error {
-    name := c.Param("name")
-    return c.JSON(http.StatusOK, map[string]string{"message": "Hello " + name})
+  app.GET("/hello/:name", func(c *falcon.Context) *falcon.Response {
+    return c.OK("Hello "+c.Param("name"), nil)
   })
 
-  app.Listen(":8080")
+  if err := app.Start(":8080"); err != nil {
+    log.Fatal(err)
+  }
 }`}
               />
             </CardContent>
